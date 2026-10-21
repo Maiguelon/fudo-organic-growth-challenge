@@ -1,4 +1,4 @@
-# AGENTS.md — Guía de Arquitectura y Mantenimiento
+# AGENTS.md — Guía de Arquitectura, Mantenimiento y Despliegue
 
 > **Proyecto:** Herramienta de Diagnóstico de Fuga Operativa y Captación Calificada para Fudo (SaaS Gastronómico).  
 > **Target:** Restaurantes en Argentina, México, Colombia, Chile y Brasil.  
@@ -43,29 +43,82 @@ Una herramienta interactiva que:
 
 ```text
 src/
-├── types/             # Definiciones TypeScript (Diagnóstico, Presets, Respuestas, LeadPayload)
-├── data/              # Presets de prueba y palabras clave de fricción operativa
-├── lib/               # Motor de cálculo matemático (fórmulas transparentes de fuga)
-├── components/        # Componentes modulares de interfaz
-│   ├── HeroSearch.tsx          # Buscador con presets rápidos y soporte de nombre custom
-│   ├── DiagnosticScanner.tsx   # Animación de análisis y preguntas de calibración
-│   ├── ReportSummary.tsx       # Métrica principal de dinero perdido
-│   ├── EvidenceFeed.tsx        # Reseñas encontradas con quejas operativas destacadas
-│   ├── FormulaExplainer.tsx    # Explicación de la fórmula con sliders interactivos
-│   ├── LeadPreviewModal.tsx    # Modal que expone los datos del lead simulado hacia Fudo
-│   └── AdaptiveCTA.tsx         # Enrutamiento según ICP vs No-ICP vs Software Satisfecho
-├── App.tsx            # Orquestador del flujo de estado principal
-├── index.css          # Tailwind CSS imports y estilos base
-└── main.tsx           # Punto de entrada
+├── types/
+│   └── index.ts               # Definiciones TypeScript (Diagnóstico, Presets, Respuestas, LeadSimulationPayload)
+├── data/
+│   └── presets.ts             # 3 Escenarios de prueba (Asador Criollo, Sushi Fusion, Cafecito) + createCustomScenario()
+├── lib/
+│   ├── calculator.ts          # Motor matemático de cálculo determinista y transparente
+│   └── calculator.test.ts     # Verificación unitaria de lógica
+├── components/
+│   ├── HeroSearch.tsx         # Buscador con presets rápidos, selector de país y soporte de nombre custom
+│   ├── DiagnosticScanner.tsx  # Pantalla de análisis simulado y preguntas de calibración
+│   ├── ReportSummary.tsx      # Métrica destacada de dinero perdido y desglose por focos
+│   ├── EvidenceFeed.tsx       # Reseñas encontradas con quejas operativas destacadas
+│   ├── FormulaExplainer.tsx   # Explicación de la fórmula con sliders interactivos en tiempo real
+│   ├── AdaptiveCTA.tsx        # Enrutamiento adaptativo según ICP vs No-ICP vs Software Satisfecho
+│   └── LeadPreviewModal.tsx   # Modal que visualiza el JSON del lead simulado transferido a Fudo
+├── App.tsx                    # Orquestador del flujo y estado reactivo global
+├── index.css                  # Tailwind CSS imports y estilos base
+└── main.tsx                   # Punto de entrada
 ```
 
 ---
 
-## 4. Reglas para Futuras Modificaciones (Guidelines para Agentes)
+## 4. Los 3 Escenarios Preconfigurados + Modo Custom
 
-1. **Transparencia en la Fórmula:** Nunca mostrar un valor de pérdida estimado sin explicar de dónde sale cada variable (ticket promedio, frecuencia de error, volumen de comandas). Cualquier cambio en la fórmula debe reflejarse tanto en `src/lib/calculator.ts` como en `FormulaExplainer.tsx`.
-2. **Reactividad Dinámica:** Toda modificación en los inputs del usuario (sliders de ticket, pedidos, porcentaje de error) debe recalcular el reporte en tiempo real sin recargar la página.
-3. **Preservar el Enrutamiento Inteligente:** No enviar a todos los usuarios al mismo CTA. Fudo cuida su CAC y tasa de conversión protegiendo al equipo de ventas de prospectos sin presupuesto.
-4. **Modo Custom:** El usuario puede ingresar cualquier nombre de restaurante; la herramienta debe asignar valores base coherentes para nombres fuera de los presets.
-5. **Modal de Lead Simulado:** El botón de "Crear cuenta Fudo" debe abrir una ventana modal que visualice claramente el JSON/objeto con los datos del lead simulado que viajarían a la base de datos de Fudo.
-6. **Commits Atómicos:** Todo cambio significativo debe acompañarse de su commit en Git con mensaje descriptivo.
+1. **Preset 1 — ICP Ideal (`Parrilla El Asador Criollo` - Buenos Aires, AR):**
+   * Alto volumen (~2.600 pedidos/mes), ticket \$18 USD, comandas en papel.
+   * Reseñas reales con quejas de demoras de 50 minutos y errores en la cuenta.
+   * Fuga alta (> \$1.000 USD/mes).
+   * **CTA:** Crear cuenta Fudo (Prueba de 14 días).
+2. **Preset 2 — Software Satisfecho (`Sushi Fusion & Rolls` - Bogotá, CO):**
+   * Volumen medio-alto (~1.800 pedidos/mes), ticket \$24 USD, software POS existente con el cual están conformes.
+   * Fricción principal en carta estática de PDF pesada en Linktree/WhatsApp.
+   * Fuga en canal digital (~ \$340 USD/mes).
+   * **CTA:** Módulo Fudo Tienda Online / Menú Digital QR (sin necesidad de cambiar su POS).
+3. **Preset 3 — No-ICP (`Cafecito de Paso` - Santiago, CL):**
+   * Micro-local al paso (14 cafés/día), ticket \$3.5 USD.
+   * Fuga insignificante (~ \$35 USD/mes). No amortiza un SaaS de \$50 USD/mes.
+   * **CTA:** Enrutamiento a plantillas de Excel gratuitas y calculadora de comisiones para no saturar al equipo de ventas.
+4. **Modo Custom (`createCustomScenario`):**
+   * Permite ingresar cualquier nombre y ciudad (en AR, MX, CO, CL o BR).
+   * Genera un escenario base con valores promedio que el usuario puede ajustar libremente.
+
+---
+
+## 5. Fórmula Matemática de Fuga Operativa
+
+$$\text{Fuga Total (USD/mes)} = \text{Fuga Demoras} + \text{Fuga Comandas} + \text{Fuga Menú Digital}$$
+
+* **Fuga Demoras:**
+  $$\text{Pedidos Mensuales} \times \left(\frac{\% \text{Demora}}{100}\right) \times \left(\frac{\% \text{Abandono}}{100}\right) \times \text{Ticket Promedio}$$
+* **Fuga Comandas y Errores:**
+  $$\text{Pedidos Mensuales} \times \left(\frac{\% \text{Error Comanda}}{100}\right) \times (\text{Ticket Promedio} \times \text{Factor Reposición } [0.5])$$
+* **Fuga Menú Digital (si usa PDF estático):**
+  $$\text{Pedidos Mensuales} \times \left(\frac{\% \text{Caída PDF}}{100}\right) \times \text{Ticket Promedio}$$
+
+*Nota:* Los sliders en `FormulaExplainer.tsx` recalculan estas variables de inmediato en memoria.
+
+---
+
+## 6. Instrucciones para Ejecutar y Desplegar
+
+### Desarrollo Local:
+```bash
+npm.cmd run dev
+```
+
+### Build de Producción y Verificación:
+```bash
+npm.cmd run build
+npm.cmd run preview
+```
+
+### Despliegue en Cloudflare Pages:
+1. Conectar el repositorio en el panel de **Cloudflare Pages**.
+2. **Build settings:**
+   - Framework preset: `None` o `Vite`.
+   - Build command: `npm run build`
+   - Build output directory: `dist`
+3. El archivo `public/_redirects` gestiona automáticamente el fallback para cualquier ruta del SPA.
