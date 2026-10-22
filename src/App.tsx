@@ -153,19 +153,8 @@ export function App() {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
-        <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© {new Date().getFullYear()} Fudo SaaS Gastronómico • Diseñado para reducir el CAC orgánico atrayendo leads calificados.</p>
-          <div className="flex items-center gap-3 text-slate-400">
-            <span>Argentina</span>
-            <span>•</span>
-            <span>México</span>
-            <span>•</span>
-            <span>Colombia</span>
-            <span>•</span>
-            <span>Chile</span>
-            <span>•</span>
-            <span>Brasil</span>
-          </div>
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <p>© {new Date().getFullYear()} Fudo SaaS Gastronómico • Diagnóstico de Fuga Operativa y Captación Calificada.</p>
         </div>
       </footer>
     </div>
