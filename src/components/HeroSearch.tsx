@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Search, MapPin, Sparkles, UtensilsCrossed, ArrowRight } from 'lucide-react'
+import { Search, MapPin, Sparkles, ArrowRight, Target, Layers, Filter } from 'lucide-react'
 import type { CountryCode, PresetScenario } from '../types'
 import { PRESET_SCENARIOS, createCustomScenario } from '../data/presets'
 
@@ -31,30 +31,27 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({ onSelectScenario }) => {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!searchTerm.trim()) {
-      // Default to Preset 1 if empty
       onSelectScenario(PRESET_SCENARIOS[0])
       return
     }
 
-    // Check if matches an existing preset
     const matched = PRESET_SCENARIOS.find(
       p => p.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
     )
     if (matched) {
       onSelectScenario(matched)
     } else {
-      // Create custom scenario for ANY typed name
       const custom = createCustomScenario(searchTerm, selectedCity, selectedCountry)
       onSelectScenario(custom)
     }
   }
 
   return (
-    <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
-      {/* Badge */}
-      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-700 text-xs sm:text-sm font-medium mb-6">
+    <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
+      {/* Top Tagline */}
+      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-800 text-xs sm:text-sm font-semibold mb-5">
         <Sparkles className="w-4 h-4 text-amber-600" />
-        <span>Auditoría de Fuga Operativa en Vivo para Gastronómicos</span>
+        <span>Auditoría de Fuga Operativa en Vivo para Restaurantes</span>
       </div>
 
       {/* Main Headline */}
@@ -66,7 +63,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({ onSelectScenario }) => {
         Ingresa el nombre de tu restaurante. Escaneamos tus reseñas en Google Maps, demoras de cocina y fricción en delivery para calcular tu <strong>pérdida económica mensual exacta</strong>.
       </p>
 
-      {/* Search Box */}
+      {/* Search Input Box */}
       <form onSubmit={handleSearchSubmit} className="mt-8 max-w-2xl mx-auto bg-white p-2.5 sm:p-3 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200">
         <div className="flex flex-col sm:flex-row gap-2">
           {/* Country Selector */}
@@ -92,7 +89,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({ onSelectScenario }) => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Ej: Parrilla Don Julio, Sushi House..."
+              placeholder="Escribe cualquier nombre (ej: Don Julio, Tacos DF...)"
               className="w-full pl-10 pr-4 py-3 bg-transparent text-sm sm:text-base text-slate-900 placeholder:text-slate-400 outline-none"
             />
           </div>
@@ -108,23 +105,90 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({ onSelectScenario }) => {
         </div>
       </form>
 
-      {/* Preset Fast Picks */}
-      <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-2 text-xs text-slate-500">
-        <span className="font-medium flex items-center gap-1">
-          <UtensilsCrossed className="w-3.5 h-3.5 text-slate-400" />
-          O explora 3 casos reales de demostración:
-        </span>
-        <div className="flex flex-wrap items-center justify-center gap-1.5">
-          {PRESET_SCENARIOS.map((preset) => (
-            <button
-              key={preset.id}
-              type="button"
-              onClick={() => onSelectScenario(preset)}
-              className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 text-slate-700 transition-colors text-xs font-medium cursor-pointer shadow-2xs"
-            >
-              {preset.name} <span className="text-slate-400">({preset.city})</span>
-            </button>
-          ))}
+      {/* Highly Visible Preset Scenarios Selector */}
+      <div className="mt-10 max-w-4xl mx-auto text-left">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+            <Target className="w-4 h-4 text-amber-600" />
+            O explora los 3 escenarios representativos de calificación:
+          </span>
+          <span className="text-2xs text-slate-400 hidden sm:inline">
+            Haz clic en un caso para ver su diagnóstico en vivo
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          {/* Preset 1: Target Principal */}
+          <div
+            onClick={() => onSelectScenario(PRESET_SCENARIOS[0])}
+            className="p-4 rounded-2xl bg-white border-2 border-amber-300 hover:border-amber-500 hover:shadow-lg transition-all cursor-pointer group relative overflow-hidden"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xs font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1">
+                <Target className="w-3 h-3 text-amber-600" />
+                Target Principal (ICP)
+              </span>
+              <span className="text-2xs font-semibold text-slate-400">AR 🇦🇷</span>
+            </div>
+            <h3 className="font-bold text-slate-900 text-sm group-hover:text-amber-700 transition-colors">
+              Parrilla El Asador Criollo
+            </h3>
+            <p className="text-xs text-slate-600 mt-1 leading-snug">
+              Alto volumen (~2.600 pedidos/mes), comanda manual en papel y quejas de demora en cocina.
+            </p>
+            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-2xs font-semibold text-amber-700">
+              <span>Fuga alta (~$1.100 USD/m)</span>
+              <span className="group-hover:translate-x-1 transition-transform">Ver flujo →</span>
+            </div>
+          </div>
+
+          {/* Preset 2: Target Secundario */}
+          <div
+            onClick={() => onSelectScenario(PRESET_SCENARIOS[1])}
+            className="p-4 rounded-2xl bg-white border border-indigo-200 hover:border-indigo-400 hover:shadow-lg transition-all cursor-pointer group relative overflow-hidden"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xs font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1">
+                <Layers className="w-3 h-3 text-indigo-600" />
+                Target Secundario
+              </span>
+              <span className="text-2xs font-semibold text-slate-400">CO 🇨🇴</span>
+            </div>
+            <h3 className="font-bold text-slate-900 text-sm group-hover:text-indigo-700 transition-colors">
+              Sushi Fusion & Rolls
+            </h3>
+            <p className="text-xs text-slate-600 mt-1 leading-snug">
+              Tiene software POS y está conforme. Fuga acotada en pedidos delivery por carta PDF en WhatsApp.
+            </p>
+            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-2xs font-semibold text-indigo-700">
+              <span>Upsell canal online (~$380 USD/m)</span>
+              <span className="group-hover:translate-x-1 transition-transform">Ver flujo →</span>
+            </div>
+          </div>
+
+          {/* Preset 3: Fuera de Target */}
+          <div
+            onClick={() => onSelectScenario(PRESET_SCENARIOS[2])}
+            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-slate-400 hover:shadow-lg transition-all cursor-pointer group relative overflow-hidden"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xs font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1">
+                <Filter className="w-3 h-3 text-slate-500" />
+                Fuera de Target
+              </span>
+              <span className="text-2xs font-semibold text-slate-400">CL 🇨🇱</span>
+            </div>
+            <h3 className="font-bold text-slate-900 text-sm group-hover:text-slate-700 transition-colors">
+              Cafecito de Paso
+            </h3>
+            <p className="text-xs text-slate-600 mt-1 leading-snug">
+              Micro-local al paso (14 cafés/día). No amortiza SaaS; se canaliza a recursos y plantillas gratis.
+            </p>
+            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-2xs font-semibold text-slate-600">
+              <span>Autofiltrado para cuidar CAC</span>
+              <span className="group-hover:translate-x-1 transition-transform">Ver flujo →</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

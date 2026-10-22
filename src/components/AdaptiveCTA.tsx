@@ -1,15 +1,17 @@
 import React from 'react'
-import { Sparkles, ArrowRight, ShieldCheck, Download, ExternalLink, Smartphone, CheckCircle } from 'lucide-react'
+import { Sparkles, ArrowRight, ShieldCheck, Download, Smartphone, CheckCircle, Calculator, FileSpreadsheet } from 'lucide-react'
 import type { BleedBreakdown } from '../types'
 
 interface AdaptiveCTAProps {
   breakdown: BleedBreakdown
   onOpenLeadModal: () => void
+  onSelectFreeTool: (toolName: string) => void
 }
 
 export const AdaptiveCTA: React.FC<AdaptiveCTAProps> = ({
   breakdown,
   onOpenLeadModal,
+  onSelectFreeTool,
 }) => {
   const { icpCategory, totalBleedMonthlyUSD } = breakdown
 
@@ -76,7 +78,7 @@ export const AdaptiveCTA: React.FC<AdaptiveCTAProps> = ({
           </h3>
 
           <p className="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
-            Tu salón funciona de forma prolija, pero detectamos fricción en tu menú de redes sociales y pedidos delivery. No necesitas migrar tu software: activa la carta digital autogestionable de Fudo para recibir pedidos directos sin comisiones.
+            Tu salón funciona de forma prolija con tu software actual, pero detectamos fuga en pedidos delivery por cartas en PDF estático. No necesitas migrar tu POS: activa la carta digital interactiva de Fudo para recibir pedidos directos sin comisiones.
           </p>
 
           <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -109,33 +111,37 @@ export const AdaptiveCTA: React.FC<AdaptiveCTAProps> = ({
         </div>
 
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-          Empieza ordenando tu negocio con nuestras plantillas gratuitas
+          Empieza ordenando tu negocio con nuestras herramientas gratuitas
         </h3>
 
         <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
-          Tu volumen actual todavía no amortiza una suscripción de $50 USD/mes. Te recomendamos comenzar organizando tu stock y margen con nuestras herramientas y plantillas de Excel 100% gratuitas:
+          Tu volumen actual todavía no amortiza una suscripción de $50 USD/mes. Te recomendamos comenzar organizando tu stock y margen con las herramientas gratuitas oficiales de Fudo:
         </p>
 
         <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <a
-            href="https://www.fu.do/recursos"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-3.5 rounded-xl border border-slate-200 hover:border-amber-300 hover:bg-amber-50/40 text-xs font-semibold text-slate-800 flex items-center justify-between transition-colors cursor-pointer group"
+          <button
+            type="button"
+            onClick={() => onSelectFreeTool('Plantilla Excel de Control de Inventario')}
+            className="p-3.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 text-xs font-semibold text-slate-800 flex items-center justify-between transition-all cursor-pointer group text-left"
           >
-            <span>📥 Plantilla Excel de Control de Inventario</span>
-            <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-amber-600" />
-          </a>
+            <span className="flex items-center gap-2">
+              <FileSpreadsheet className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Plantilla Excel de Control de Inventario</span>
+            </span>
+            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
+          </button>
 
-          <a
-            href="https://www.fu.do/recursos"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-3.5 rounded-xl border border-slate-200 hover:border-amber-300 hover:bg-amber-50/40 text-xs font-semibold text-slate-800 flex items-center justify-between transition-colors cursor-pointer group"
+          <button
+            type="button"
+            onClick={() => onSelectFreeTool('Calculadora de Rentabilidad de Platos')}
+            className="p-3.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 text-xs font-semibold text-slate-800 flex items-center justify-between transition-all cursor-pointer group text-left"
           >
-            <span>🧮 Calculadora de Comisiones de Delivery</span>
-            <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-amber-600" />
-          </a>
+            <span className="flex items-center gap-2">
+              <Calculator className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>Calculadora de Rentabilidad de Platos</span>
+            </span>
+            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
+          </button>
         </div>
       </div>
     </div>

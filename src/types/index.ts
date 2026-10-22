@@ -15,7 +15,7 @@ export interface OperationalAnswers {
   restaurantName: string
   country: CountryCode
   city: string
-  monthlyOrders: number // Pedidos o mesas atendidas al mes
+  monthlyOrders: number // Pedidos o mesas totales al mes
   averageTicketUSD: number // Ticket promedio en USD
   currentSystem: CurrentSystemType
   hasDigitalMenu: boolean // Si tiene menú interactivo vs PDF estático
@@ -34,11 +34,18 @@ export interface ReviewEvidence {
 export interface BleedVariables {
   monthlyOrders: number
   averageTicketUSD: number
-  delayRatePercent: number // % de clientes afectados por demoras (ej: 4%)
+  deliverySharePercent: number // % del volumen que corresponde a pedidos digitales/delivery (ej: 30%)
+  delayRatePercent: number // % de clientes de salón afectados por demoras (ej: 4%)
   delayChurnRatePercent: number // % de esos clientes insatisfechos que deciden no volver
   orderErrorRatePercent: number // % de pedidos con error de comanda/cocina
   orderErrorCostFactor: number // Fracción del ticket perdida en reponer/descuento (ej: 0.5)
-  digitalDropoffRatePercent: number // % de ventas delivery perdidas por menú en PDF estático
+  digitalDropoffRatePercent: number // % de pedidos delivery perdidos por menú en PDF estático
+}
+
+export interface CategoryScore {
+  score: number // 1.0 to 10.0
+  label: string // 'Crítico' | 'Mejorable' | 'Bueno' | 'Excelente'
+  colorClass: string
 }
 
 export interface BleedBreakdown {
@@ -49,6 +56,12 @@ export interface BleedBreakdown {
   totalBleedAnnualUSD: number
   icpCategory: ICPCategory
   variables: BleedVariables
+  scores: {
+    delay: CategoryScore
+    orderError: CategoryScore
+    digitalMenu: CategoryScore
+    overall: CategoryScore
+  }
 }
 
 export interface PresetScenario {
@@ -60,6 +73,11 @@ export interface PresetScenario {
   typeTag: string
   rating: number
   totalReviews: number
+  icpBadge: {
+    role: string // 'Target Principal' | 'Target Secundario' | 'Fuera de Target'
+    targetCategory: 'ideal' | 'secondary' | 'non_icp'
+    description: string
+  }
   answers: OperationalAnswers
   variables: BleedVariables
   reviews: ReviewEvidence[]

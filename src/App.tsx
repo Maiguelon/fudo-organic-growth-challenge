@@ -8,6 +8,7 @@ import { EvidenceFeed } from './components/EvidenceFeed'
 import { FormulaExplainer } from './components/FormulaExplainer'
 import { AdaptiveCTA } from './components/AdaptiveCTA'
 import { LeadPreviewModal } from './components/LeadPreviewModal'
+import { NonIcpFilterModal } from './components/NonIcpFilterModal'
 import { calculateBleed, generateLeadSimulationPayload } from './lib/calculator'
 
 type AppStep = 'search' | 'scanner' | 'report'
@@ -16,6 +17,7 @@ export function App() {
   const [step, setStep] = useState<AppStep>('search')
   const [selectedScenario, setSelectedScenario] = useState<PresetScenario>(PRESET_SCENARIOS[0])
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false)
+  const [activeFreeTool, setActiveFreeTool] = useState<string | null>(null)
 
   // Reactive variables that user can adjust in real time via sliders
   const [activeVariables, setActiveVariables] = useState<BleedVariables>(PRESET_SCENARIOS[0].variables)
@@ -69,9 +71,12 @@ export function App() {
           </div>
 
           <div className="flex items-center gap-3 sm:gap-4 text-xs font-medium">
-            <span className="hidden md:inline-block text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-              ● +80.000 visitas/mes en AR, MX, CO, CL y BR
+            {/* Demo indicator in header for internal colleagues */}
+            <span className="hidden md:inline-flex items-center gap-1.5 text-amber-800 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-semibold">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              Demo Interna • Datos de Scraping Simulados
             </span>
+
             {step !== 'search' && (
               <button
                 onClick={handleReset}
@@ -100,7 +105,7 @@ export function App() {
 
         {step === 'report' && (
           <div className="py-8 px-4 sm:px-6 max-w-5xl mx-auto space-y-8 animate-in fade-in duration-200">
-            {/* 1. Main Loss Metric Summary */}
+            {/* 1. Main Loss Metric Summary with 1-10 Scores */}
             <ReportSummary
               breakdown={currentBreakdown}
               restaurantName={selectedScenario.name}
@@ -123,12 +128,13 @@ export function App() {
             <AdaptiveCTA
               breakdown={currentBreakdown}
               onOpenLeadModal={() => setIsLeadModalOpen(true)}
+              onSelectFreeTool={(toolName) => setActiveFreeTool(toolName)}
             />
           </div>
         )}
       </main>
 
-      {/* Simulated Lead Payload Modal */}
+      {/* Simulated Lead Payload Modal (For ICP Ideal & Software Satisfied) */}
       {isLeadModalOpen && (
         <LeadPreviewModal
           payload={leadPayload}
@@ -136,10 +142,19 @@ export function App() {
         />
       )}
 
+      {/* Non-ICP Filtered Modal (Protección de embudo & CAC) */}
+      {activeFreeTool && (
+        <NonIcpFilterModal
+          toolName={activeFreeTool}
+          restaurantName={selectedScenario.name}
+          onClose={() => setActiveFreeTool(null)}
+        />
+      )}
+
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© {new Date().getFullYear()} Fudo SaaS Gastronómico • Diseñado para reducir el CAC orgánico con leads calificados.</p>
+          <p>© {new Date().getFullYear()} Fudo SaaS Gastronómico • Diseñado para reducir el CAC orgánico atrayendo leads calificados.</p>
           <div className="flex items-center gap-3 text-slate-400">
             <span>Argentina</span>
             <span>•</span>

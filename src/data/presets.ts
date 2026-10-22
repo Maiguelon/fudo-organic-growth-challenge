@@ -10,6 +10,11 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
     typeTag: 'Parrilla Tradicional & Salón',
     rating: 3.9,
     totalReviews: 248,
+    icpBadge: {
+      role: 'Target Principal (ICP Ideal)',
+      targetCategory: 'ideal',
+      description: 'Alto volumen (~2.600 pedidos/mes), comanda manual en papel y quejas de demora en cocina.',
+    },
     answers: {
       restaurantName: 'Parrilla El Asador Criollo',
       country: 'AR',
@@ -22,11 +27,12 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
     variables: {
       monthlyOrders: 2600,
       averageTicketUSD: 18,
+      deliverySharePercent: 20, // 20% delivery, 80% salón
       delayRatePercent: 4.5,
       delayChurnRatePercent: 30,
       orderErrorRatePercent: 3.2,
       orderErrorCostFactor: 0.6,
-      digitalDropoffRatePercent: 2.5,
+      digitalDropoffRatePercent: 3.0,
     },
     reviews: [
       {
@@ -77,6 +83,11 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
     typeTag: 'Sushi & Cocina Nikkei',
     rating: 4.6,
     totalReviews: 412,
+    icpBadge: {
+      role: 'Target Secundario (Oportunidad Upsell)',
+      targetCategory: 'secondary',
+      description: 'Tiene software POS y está conforme. La fuga ocurre solo en delivery por usar menú PDF en WhatsApp.',
+    },
     answers: {
       restaurantName: 'Sushi Fusion & Rolls',
       country: 'CO',
@@ -84,16 +95,17 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
       monthlyOrders: 1800, // ~60 pedidos/día
       averageTicketUSD: 24,
       currentSystem: 'software_happy',
-      hasDigitalMenu: false, // Menú PDF estático en Linktree
+      hasDigitalMenu: false, // Menú PDF estático en Linktree / WhatsApp
     },
     variables: {
       monthlyOrders: 1800,
       averageTicketUSD: 24,
-      delayRatePercent: 1.2,
-      delayChurnRatePercent: 20,
-      orderErrorRatePercent: 1.0,
+      deliverySharePercent: 35, // 35% de los pedidos son delivery (630 pedidos/mes)
+      delayRatePercent: 0.6, // En salón casi no hay demoras porque tienen POS
+      delayChurnRatePercent: 12,
+      orderErrorRatePercent: 0.4, // Muy bajo error de comanda
       orderErrorCostFactor: 0.5,
-      digitalDropoffRatePercent: 4.8,
+      digitalDropoffRatePercent: 2.2, // Pérdida acotada en canal digital (14 pedidos de delivery al mes)
     },
     reviews: [
       {
@@ -124,7 +136,7 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
         category: 'digital',
       },
     ],
-    notes: 'Operación de salón controlada con software existente. La fuga principal está en la fricción de su canal digital/delivery.',
+    notes: 'Operación de salón controlada con software existente. La fuga principal está en la fricción de su canal digital/delivery (~$380 USD/mes).',
   },
   {
     id: 'nonicp-cafe',
@@ -135,6 +147,11 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
     typeTag: 'Café al Paso / Takeaway',
     rating: 4.4,
     totalReviews: 32,
+    icpBadge: {
+      role: 'Fuera de Target (No-ICP Filtrado)',
+      targetCategory: 'non_icp',
+      description: 'Micro-local sin volumen (14 cafés/día). No amortiza $50 USD/mes; se canaliza a herramientas gratuitas.',
+    },
     answers: {
       restaurantName: 'Cafecito de Paso',
       country: 'CL',
@@ -147,9 +164,10 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
     variables: {
       monthlyOrders: 420,
       averageTicketUSD: 3.5,
-      delayRatePercent: 2.0,
-      delayChurnRatePercent: 15,
-      orderErrorRatePercent: 1.5,
+      deliverySharePercent: 5,
+      delayRatePercent: 1.8,
+      delayChurnRatePercent: 12,
+      orderErrorRatePercent: 1.2,
       orderErrorCostFactor: 0.4,
       digitalDropoffRatePercent: 1.0,
     },
@@ -173,7 +191,7 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
         category: 'delay',
       },
     ],
-    notes: 'Micro-emprendimiento sin volumen transaccional suficiente para justificar un SaaS de $50 USD/mes.',
+    notes: 'Micro-emprendimiento sin volumen transaccional suficiente para justificar un SaaS de $50 USD/mes. Fuga estimada ~$30 USD/mes.',
   },
 ]
 
@@ -191,6 +209,11 @@ export function createCustomScenario(
     typeTag: 'Restaurante & Bar',
     rating: 4.1,
     totalReviews: 124,
+    icpBadge: {
+      role: 'Caso Personalizado',
+      targetCategory: 'ideal',
+      description: 'Restaurante ingresado por el usuario. Parámetros ajustables en vivo.',
+    },
     answers: {
       restaurantName: name.trim() || 'Mi Restaurante',
       country,
@@ -203,11 +226,12 @@ export function createCustomScenario(
     variables: {
       monthlyOrders: 1500,
       averageTicketUSD: 16,
-      delayRatePercent: 3.8,
+      deliverySharePercent: 25,
+      delayRatePercent: 3.5,
       delayChurnRatePercent: 25,
-      orderErrorRatePercent: 2.8,
+      orderErrorRatePercent: 2.5,
       orderErrorCostFactor: 0.5,
-      digitalDropoffRatePercent: 3.5,
+      digitalDropoffRatePercent: 3.0,
     },
     reviews: [
       {

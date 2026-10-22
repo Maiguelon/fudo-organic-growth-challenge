@@ -20,6 +20,9 @@ export const FormulaExplainer: React.FC<FormulaExplainerProps> = ({
     })
   }
 
+  const deliveryOrders = Math.round(variables.monthlyOrders * ((variables.deliverySharePercent || 30) / 100))
+  const salonOrders = variables.monthlyOrders - deliveryOrders
+
   return (
     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
@@ -45,13 +48,13 @@ export const FormulaExplainer: React.FC<FormulaExplainerProps> = ({
 
         <div className="space-y-2 border-t border-slate-800 pt-3 text-2xs sm:text-xs text-slate-300">
           <div>
-            <span className="text-amber-400 font-semibold">1. Fuga_Demoras</span> = Pedidos_Mes ({variables.monthlyOrders}) × %Demora ({variables.delayRatePercent}%) × %Abandono ({variables.delayChurnRatePercent}%) × Ticket (${variables.averageTicketUSD})
+            <span className="text-amber-400 font-semibold">1. Fuga_Demoras</span> = Pedidos_Salón ({salonOrders}) × %Demora ({variables.delayRatePercent}%) × %Abandono ({variables.delayChurnRatePercent}%) × Ticket (${variables.averageTicketUSD})
           </div>
           <div>
-            <span className="text-rose-400 font-semibold">2. Fuga_Comandas</span> = Pedidos_Mes ({variables.monthlyOrders}) × %Error ({variables.orderErrorRatePercent}%) × (Ticket × {variables.orderErrorCostFactor})
+            <span className="text-rose-400 font-semibold">2. Fuga_Comandas</span> = Pedidos_Totales ({variables.monthlyOrders}) × %Error ({variables.orderErrorRatePercent}%) × (Ticket × {variables.orderErrorCostFactor})
           </div>
           <div>
-            <span className="text-blue-400 font-semibold">3. Fuga_Menú</span> = {hasDigitalMenu ? '0 (Cuenta con menú interactivo)' : `Pedidos_Mes (${variables.monthlyOrders}) × %Caída_PDF (${variables.digitalDropoffRatePercent}%) × Ticket ($${variables.averageTicketUSD})`}
+            <span className="text-blue-400 font-semibold">3. Fuga_Menú</span> = {hasDigitalMenu ? '0 (Cuenta con menú interactivo)' : `Pedidos_Delivery (${deliveryOrders}) × %Caída_PDF (${variables.digitalDropoffRatePercent}%) × Ticket ($${variables.averageTicketUSD})`}
           </div>
         </div>
       </div>
@@ -118,7 +121,7 @@ export const FormulaExplainer: React.FC<FormulaExplainerProps> = ({
             </div>
             <input
               type="range"
-              min="0.5"
+              min="0.2"
               max="8"
               step="0.1"
               value={variables.orderErrorRatePercent}
@@ -126,31 +129,31 @@ export const FormulaExplainer: React.FC<FormulaExplainerProps> = ({
               className="w-full accent-rose-600 cursor-pointer"
             />
             <div className="flex justify-between text-2xs text-slate-400 mt-1">
-              <span>0.5% (operación impecable)</span>
-              <span>4% (promedio papel)</span>
-              <span>8% (desborde)</span>
+              <span>0.2% (operación con POS)</span>
+              <span>3.5% (promedio papel)</span>
+              <span>8% (desborde total)</span>
             </div>
           </div>
 
-          {/* Slider 4: % Demoras en Cocina */}
+          {/* Slider 4: % Caída en Delivery por Menú PDF */}
           <div>
             <div className="flex justify-between text-xs font-semibold text-slate-800 mb-1">
-              <span>Tasa de comensales afectados por demoras</span>
-              <span className="text-amber-700 font-bold">{variables.delayRatePercent}%</span>
+              <span>% Caída en pedidos delivery por menú PDF</span>
+              <span className="text-blue-700 font-bold">{variables.digitalDropoffRatePercent}%</span>
             </div>
             <input
               type="range"
               min="0.5"
-              max="10"
+              max="8"
               step="0.1"
-              value={variables.delayRatePercent}
-              onChange={(e) => handleSlider('delayRatePercent', Number(e.target.value))}
-              className="w-full accent-amber-600 cursor-pointer"
+              value={variables.digitalDropoffRatePercent}
+              onChange={(e) => handleSlider('digitalDropoffRatePercent', Number(e.target.value))}
+              className="w-full accent-blue-600 cursor-pointer"
             />
             <div className="flex justify-between text-2xs text-slate-400 mt-1">
-              <span>0.5% (sin demoras)</span>
-              <span>5% (esperas frecuentes)</span>
-              <span>10% (cuello de botella)</span>
+              <span>0.5% (mínimo abandono)</span>
+              <span>2.5% (promedio PDF)</span>
+              <span>8% (carta ilegible)</span>
             </div>
           </div>
         </div>
