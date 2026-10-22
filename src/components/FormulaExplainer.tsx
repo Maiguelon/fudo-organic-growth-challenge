@@ -1,5 +1,5 @@
 import React from 'react'
-import { Calculator, Sliders, Info } from 'lucide-react'
+import { Calculator, Sliders, Info, CheckCircle2 } from 'lucide-react'
 import type { BleedVariables } from '../types'
 
 interface FormulaExplainerProps {
@@ -35,7 +35,7 @@ export const FormulaExplainer: React.FC<FormulaExplainerProps> = ({
             ¿De dónde sale este número? Fórmula matemática desglosada
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            No usamos cifras inventadas. Puedes ajustar cualquier variable en vivo y ver cómo recalcula la fuga al instante:
+            No usamos cifras inventadas. Puedes calibrar cualquier variable en vivo y ver cómo recalcula la fuga al instante:
           </p>
         </div>
       </div>
@@ -108,15 +108,15 @@ export const FormulaExplainer: React.FC<FormulaExplainerProps> = ({
             />
             <div className="flex justify-between text-2xs text-slate-400 mt-1">
               <span>100 pedidos</span>
-              <span>2.500 pedidos</span>
+              <span>2.500</span>
               <span>5.000 pedidos</span>
             </div>
           </div>
 
-          {/* Slider 3: % Error en Comandas */}
+          {/* Slider 3: % Error en Comandas (CLEAN SHORT LABELS - NO OVERLAP) */}
           <div>
             <div className="flex justify-between text-xs font-semibold text-slate-800 mb-1">
-              <span>Tasa estimada de error en comanda/cocina</span>
+              <span>Tasa de error en cocina / comanda</span>
               <span className="text-rose-700 font-bold">{variables.orderErrorRatePercent}%</span>
             </div>
             <input
@@ -129,33 +129,45 @@ export const FormulaExplainer: React.FC<FormulaExplainerProps> = ({
               className="w-full accent-rose-600 cursor-pointer"
             />
             <div className="flex justify-between text-2xs text-slate-400 mt-1">
-              <span>0.2% (operación con POS)</span>
-              <span>3.5% (promedio papel)</span>
-              <span>8% (desborde total)</span>
+              <span>0.2% (Bajo)</span>
+              <span>3.5% (Medio)</span>
+              <span>8% (Crítico)</span>
             </div>
           </div>
 
-          {/* Slider 4: % Caída en Delivery por Menú PDF */}
-          <div>
-            <div className="flex justify-between text-xs font-semibold text-slate-800 mb-1">
-              <span>% Caída en pedidos delivery por menú PDF</span>
-              <span className="text-blue-700 font-bold">{variables.digitalDropoffRatePercent}%</span>
+          {/* Slider 4: Only show if !hasDigitalMenu. If hasDigitalMenu, show positive status */}
+          {!hasDigitalMenu ? (
+            <div>
+              <div className="flex justify-between text-xs font-semibold text-slate-800 mb-1">
+                <span>% Caída en delivery por menú PDF</span>
+                <span className="text-blue-700 font-bold">{variables.digitalDropoffRatePercent}%</span>
+              </div>
+              <input
+                type="range"
+                min="0.5"
+                max="8"
+                step="0.1"
+                value={variables.digitalDropoffRatePercent}
+                onChange={(e) => handleSlider('digitalDropoffRatePercent', Number(e.target.value))}
+                className="w-full accent-blue-600 cursor-pointer"
+              />
+              <div className="flex justify-between text-2xs text-slate-400 mt-1">
+                <span>0.5% (Leve)</span>
+                <span>2.5% (Típico)</span>
+                <span>8% (Grave)</span>
+              </div>
             </div>
-            <input
-              type="range"
-              min="0.5"
-              max="8"
-              step="0.1"
-              value={variables.digitalDropoffRatePercent}
-              onChange={(e) => handleSlider('digitalDropoffRatePercent', Number(e.target.value))}
-              className="w-full accent-blue-600 cursor-pointer"
-            />
-            <div className="flex justify-between text-2xs text-slate-400 mt-1">
-              <span>0.5% (mínimo abandono)</span>
-              <span>2.5% (promedio PDF)</span>
-              <span>8% (carta ilegible)</span>
+          ) : (
+            <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-4 flex flex-col justify-center">
+              <div className="flex items-center gap-1.5 text-emerald-800 font-bold text-xs mb-1">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Menú interactivo activo (0% de fuga)</span>
+              </div>
+              <p className="text-2xs text-emerald-700 leading-snug">
+                Al contar con carta interactiva para recibir pedidos, no sufres pérdidas por cartas PDF estáticas en delivery.
+              </p>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="mt-4 flex items-center gap-2 text-xs text-slate-500">
